@@ -19,9 +19,11 @@ links every skill for Codex, and adds a `skills-sync` alias to your shell.
 Open a new shell, then restart Claude Code. Run `/` in the prompt to see the
 skills listed.
 
-> [!WARNING]
-> If `~/.claude/skills` already exists and is not this repo, the script stops.
-> Move the folder away first, or copy your skills into the repo.
+> [!NOTE]
+> If `~/.claude/skills` already exists (for example, your distro put skill
+> links there), the script adopts it. Existing entries stay in place and git
+> ignores them. Anything with the same name as a repo skill moves to
+> `~/.claude/skills.local/`.
 
 ## Keep machines in sync
 
