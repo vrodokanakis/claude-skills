@@ -1,118 +1,116 @@
 ---
 name: create-pull-request
-description: Use when the user wants to open a GitHub pull request — drafts a conventional-commit-style title and structured body, pushes the current branch, and auto-selects labels by matching the repo's available GitHub labels against the diff. Triggers on "create a PR", "open a pull request", "raise a PR", "submit this for review".
+description: Use when the user wants to open a GitHub pull request for the current branch. Triggers on "create a PR", "open a pull request", "raise a PR", "submit this for review", "PR this".
 ---
 
 # Create Pull Request
 
-## Overview
-
-Open a GitHub PR from the current branch with a well-formed title, a structured body, and
-labels chosen by matching the repo's *actual* available labels against the change. Labels are
-proposed automatically and confirmed with the user before the PR is created.
-
-## When to use
-
-Use when the user asks to open/create/raise/submit a pull request, or when a branch of work is
-ready for review and a PR is the next step.
-
-## Prerequisites
-
-- `gh` CLI installed and authenticated (`gh auth status`). If not authenticated, stop and tell
-  the user to run `gh auth login` (suggest they type `! gh auth login` in this session).
-- Work committed on a non-default branch. Never commit on the user's behalf without their
-  intent; if uncommitted changes belong in the PR, confirm and commit first.
+Open the PR in one pass. Do not ask for confirmation of the title, body or
+labels; the user asked for a PR, so make it. Ask only when something blocks
+creation (see Stop conditions).
 
 ## Workflow
 
-Follow these steps in order.
-
 ### 1. Gather context
-
-Run the bundled script from the repo root — it collects branch state, any existing PR, the
-repo's labels (with descriptions), the commit list, and the diffstat in one call:
 
 ```bash
 "$HOME/.claude/skills/create-pull-request/scripts/pr_context.sh"
 ```
 
-Read each section of the output:
-- **BRANCH** — confirm the current branch is not the default branch, and note whether an
-  upstream exists (`(none — needs push -u)` means a first push is required).
-- **EXISTING_PR** — if a PR already exists for this branch, do NOT create a second one. Offer to
-  update it (`gh pr edit`) or just report its URL instead.
-- **AVAILABLE_LABELS** — the only labels that may be applied. Never invent label names; `gh pr
-  create --label X` fails the entire command if `X` doesn't exist in the repo.
-- **COMMITS_ON_BRANCH** / **DIFFSTAT** — the substance of the change, for drafting and matching.
+Read the sections:
+- **BRANCH**: current must not be the default branch.
+- **EXISTING_PR**: if one exists, do not create a second. Update it with
+  `gh pr edit` and report its URL.
+- **AVAILABLE_LABELS**: the only label names allowed. An unknown name fails
+  the whole `gh pr create` call.
+- **COMMITS_ON_BRANCH** / **DIFFSTAT**: what changed. Read
+  `git diff <default>...HEAD` for anything the diffstat leaves unclear.
+- **PR_TEMPLATE**: if present, fill that template instead of the body below.
+- **REPO_RULES**: label or PR rules from the repo's CLAUDE.md or AGENTS.md.
+  They win over this skill.
 
-If the diff is large or the diffstat is ambiguous, inspect specifics with
-`git diff <default>...HEAD` before drafting.
+### 2. Write the title
 
-### 2. Draft title and body
+Conventional-commit prefix (`feat:`, `fix:`, `docs:`, `refactor:`, `chore:`,
+`test:`), imperative, under 70 characters. One logical change: reuse its
+commit subject.
 
-- **Title**: conventional-commit style (`feat:`, `fix:`, `docs:`, `refactor:`, `chore:`,
-  `test:`), imperative, concise. If the branch is a single logical change, mirror its commit.
-- **Body**: short markdown —
-  - `## Summary` — 1–3 bullets on what changed and why.
-  - `## Test plan` — how it was verified (commands run, checks passed) or what still needs
-    testing. Be honest: if something wasn't tested, say so.
+### 3. Write the body
 
-If the repo has a PR template at `.github/pull_request_template.md`, fill that in instead of
-imposing the structure above.
+The body is exactly this, and nothing more:
 
-### 3. Auto-select labels
+```markdown
+## What
+<1 to 3 bullets. Each bullet: one plain sentence, under 15 words, says what changed.>
 
-Match the change against **AVAILABLE_LABELS** using both the label name and its description:
+## Why
+<1 sentence. The problem or need. Link the ticket if one exists.>
 
-- Map change type to labels: `fix:` → a `bug` label; new functionality → `feature` /
-  `enhancement`; docs-only → `documentation`; dependency bumps → `dependencies`. Use the
-  descriptions to disambiguate similarly named labels.
-- Match touched areas to scoped labels (e.g. `frontend`, `backend`, `area/api`) when the
-  diffstat clearly implicates that area.
-- Prefer precision over coverage: only propose labels with clear evidence. 1–3 labels is
-  typical. If nothing matches confidently, propose none.
-- If the repo has no labels, skip labeling entirely.
+## Testing
+<1 to 3 bullets: the commands run and their result, or "Not tested: <reason>".>
+```
 
-### 4. Confirm before creating
+Rules for the words:
+- Whole body under 100 words.
+- Everyday words. Say "fix", not "remediate". Say "add", not "introduce".
+- No adjectives about quality ("robust", "clean", "comprehensive").
+- No file-by-file lists. The diff shows files.
+- No repeat of the title in the first bullet.
+- No "This PR" openers. Start bullets with a verb.
 
-Present the drafted title, body, base branch (the repo default), and proposed labels to the
-user compactly, and ask for confirmation or edits. Do not create the PR until the user confirms.
+Good:
+
+```markdown
+## What
+- Add a `--no-pr` flag to skip the merge check.
+- Refuse to remove the main checkout.
+
+## Why
+Teardown ran on branches that never had a PR and failed at `gh pr view`.
+
+## Testing
+- Ran `worktree-teardown.sh feat-x --no-pr --force` in a throwaway repo. Worktree and branch removed.
+- Not tested: the Herdr pane move.
+```
+
+### 4. Pick labels
+
+From **AVAILABLE_LABELS** only, using name and description:
+- `fix:` → bug label. New behaviour → feature or enhancement. Docs only →
+  documentation. Dependency bumps → dependencies.
+- Add area labels (`frontend`, `ruby`, `javascript`, `area/api`) when the
+  diffstat clearly touches that area.
+- 1 to 3 labels. None if nothing matches. Follow **REPO_RULES** if it names
+  labels to always apply.
 
 ### 5. Push and create
 
-After confirmation:
-
 ```bash
-# Push the current branch, setting upstream if needed.
 git push -u origin HEAD
-
-# Create the PR against the default branch with the confirmed labels.
-# Use --body-file with a heredoc to avoid shell-quoting issues on multi-line bodies.
-gh pr create \
-  --base "<default-branch>" \
-  --title "<title>" \
-  --label "<label-1>" --label "<label-2>" \
-  --body-file - <<'EOF'
-## Summary
-...
-
-## Test plan
-...
-EOF
+gh pr create --base "<default>" --title "<title>" \
+  --label "<l1>" --label "<l2>" \
+  --body-file - <<'BODY'
+<body>
+BODY
 ```
 
-Notes:
-- Pass each label with its own `--label` flag, using the exact names from AVAILABLE_LABELS.
-- If `gh pr create` rejects a label, it usually means a name mismatch — re-check against
-  AVAILABLE_LABELS, drop the offending label, and retry. Labels can also be added afterward with
-  `gh pr edit <num> --add-label`.
+Add `--draft` if the user said draft, or if REPO_RULES says PRs open as
+drafts. If `gh` rejects a label, drop it and retry. Add it later with
+`gh pr edit <n> --add-label` only if the name was a typo on your side.
 
 ### 6. Report
 
-Print the PR URL returned by `gh pr create` and a one-line summary of the title and applied
-labels.
+One line: the PR URL, the title, the labels applied. Nothing else.
+
+## Stop conditions
+
+Stop and tell the user, in one sentence each, when:
+- `gh auth status` fails. Suggest `! gh auth login`.
+- The current branch is the default branch.
+- There are uncommitted changes. Never commit for the user unless they asked.
+- A PR already exists and the user did not ask to update it.
 
 ## Resources
 
-- `scripts/pr_context.sh` — one-shot context gatherer (branch, existing PR, labels+descriptions,
-  commits, diffstat). Requires an authenticated `gh`.
+- `scripts/pr_context.sh`: branch state, existing PR, labels with
+  descriptions, commits, diffstat, PR template, repo rules.
