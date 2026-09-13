@@ -8,28 +8,20 @@ matches its description. Some skills also ship scripts that do the real work.
 
 ## Install
 
-Clone the repo into the place Claude Code looks for global skills:
+One command on any machine, new or existing:
 
 ```bash
-rm -rf ~/.claude/skills
-git clone https://github.com/vrodokanakis/claude-skills ~/.claude/skills
+curl -fsSL https://raw.githubusercontent.com/vrodokanakis/claude-skills/main/sync.sh | bash
 ```
 
-Restart Claude Code. Run `/` in the prompt to see the skills listed.
+It clones the repo into `~/.claude/skills` (or pulls if it is already there),
+links every skill for Codex, and adds a `skills-sync` alias to your shell.
+Open a new shell, then restart Claude Code. Run `/` in the prompt to see the
+skills listed.
 
 > [!WARNING]
-> The first command deletes any skills already in that folder. Move them into
-> the repo first if you want to keep them.
-
-## Use the same skills in OpenAI Codex
-
-Codex reads skills from `~/.agents/skills`. Run this once per machine:
-
-```bash
-~/.claude/skills/link-codex.sh
-```
-
-It symlinks every skill into that folder. Re-run it after you add a new skill.
+> If `~/.claude/skills` already exists and is not this repo, the script stops.
+> Move the folder away first, or copy your skills into the repo.
 
 ## Keep machines in sync
 
@@ -43,13 +35,20 @@ git commit -m "Describe the change"
 git push
 ```
 
-On every other machine, pull and refresh the Codex links in one step:
+On every other machine, run:
 
 ```bash
-git -C ~/.claude/skills pull && ~/.claude/skills/link-codex.sh
+skills-sync
 ```
 
-Run the same line after you add a new skill, so Codex sees it too.
+It pulls the latest skills and refreshes the Codex links. Run it after you
+add a new skill too.
+
+## Use the same skills in OpenAI Codex
+
+Codex reads skills from `~/.agents/skills`. `skills-sync` keeps a symlink
+there for every skill, so nothing extra is needed. `link-codex.sh` does only
+the linking step if you ever want it alone.
 
 ## Skills
 
