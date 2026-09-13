@@ -107,3 +107,7 @@ Third-party skills and their upstream repos are listed in `SOURCES.md`.
 
 Scripts are Bash. They need `git`, `jq` and, for the Herdr parts, the `herdr`
 CLI. They were written on macOS. Linux should work too but is not tested.
+
+## License
+
+MIT for the skills written here. Third-party skills keep their own licence; see `SOURCES.md`.
