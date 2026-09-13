@@ -39,11 +39,10 @@ On the other machines, run `git pull` in the same folder before you start work.
 
 | Skill | Use it when |
 | --- | --- |
-| `argument-validator` | You want to check an argument for hidden assumptions and logic errors. |
 | `create-pull-request` | You want to open a GitHub pull request with a good title, body and labels. |
-| `deep-research` | You need a long, cited research report on a topic. |
+| `deep-research` | You need a long, cited research report with source quality checks. |
 | `herdr` | You are inside [Herdr](https://herdr.dev) and want to control panes, tabs or agents. |
-| `readme-writer` | You are writing or fixing a README. |
+| `readme-writer` | You are writing a README or want to measure and lower the reading level of any prose. |
 | `remix` | You are building a Remix 3 app. |
 | `sandi-metz-rules` | You are reviewing Ruby code for size and clarity. |
 | `skill-creator` | You want to create or improve a skill. |
@@ -77,6 +76,8 @@ its own steps with two optional scripts in the repo:
 3. Test it on a real task before you commit.
 
 The `skill-creator` skill walks you through this.
+
+Third-party skills and their upstream repos are listed in `SOURCES.md`.
 
 ## Layout
 
