@@ -43,7 +43,13 @@ git commit -m "Describe the change"
 git push
 ```
 
-On the other machines, run `git pull` in the same folder before you start work.
+On every other machine, pull and refresh the Codex links in one step:
+
+```bash
+git -C ~/.claude/skills pull && ~/.claude/skills/link-codex.sh
+```
+
+Run the same line after you add a new skill, so Codex sees it too.
 
 ## Skills
 
