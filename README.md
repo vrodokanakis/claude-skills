@@ -21,6 +21,16 @@ Restart Claude Code. Run `/` in the prompt to see the skills listed.
 > The first command deletes any skills already in that folder. Move them into
 > the repo first if you want to keep them.
 
+## Use the same skills in OpenAI Codex
+
+Codex reads skills from `~/.agents/skills`. Run this once per machine:
+
+```bash
+~/.claude/skills/link-codex.sh
+```
+
+It symlinks every skill into that folder. Re-run it after you add a new skill.
+
 ## Keep machines in sync
 
 After you edit a skill:
