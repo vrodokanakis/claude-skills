@@ -94,13 +94,24 @@ gh pr create --base "<default>" --title "<title>" \
 BODY
 ```
 
+After the PR exists, make sure the branch is deleted on merge. That checkbox
+on the PR page comes from a repo setting, so turn it on once per repo:
+
+```bash
+gh repo edit --delete-branch-on-merge
+```
+
+If that fails (no admin rights), say so in one line and tell the user to merge
+with `gh pr merge --delete-branch`. Never skip this silently.
+
 Add `--draft` if the user said draft, or if REPO_RULES says PRs open as
 drafts. If `gh` rejects a label, drop it and retry. Add it later with
 `gh pr edit <n> --add-label` only if the name was a typo on your side.
 
 ### 6. Report
 
-One line: the PR URL, the title, the labels applied. Nothing else.
+One line: the PR URL, the title, the labels applied. Add "branch deletes on
+merge" only if the repo setting could not be turned on. Nothing else.
 
 ## Stop conditions
 
