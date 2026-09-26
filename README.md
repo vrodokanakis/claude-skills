@@ -63,6 +63,7 @@ the linking step if you ever want it alone.
 | `remix` | You are building a Remix 3 app. |
 | `sandi-metz-rules` | You are reviewing Ruby code for size and clarity. |
 | `skill-creator` | You want to create or improve a skill. |
+| `test-audit` | You are writing or reviewing tests, or want to prune low-value tests (Ruby, JS/TS, Python, Rust). |
 | `worktree-space` | You are inside Herdr and want a new git worktree in its own workspace. |
 | `tearing-down-a-merged-worktree` | A pull request merged and its worktree should go away. |
 
