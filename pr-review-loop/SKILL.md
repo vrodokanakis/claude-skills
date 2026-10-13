@@ -137,6 +137,11 @@ do not reply to them. In the report, say what each one asked for.
 
 - State lives in `.git/pr-review-loop/`. Each PR comment the script posts
   carries a hidden marker, so handled items stay handled across sessions.
+- `reply`, `comment` and `ack` mark handled the version of each item that
+  the last `status` or `wait` printed. A comment or edit that lands
+  mid-round shows up on the next poll. If one says `not in the last status
+  output`, run `status`, read the items, then retry. If `resolve` says
+  `NOT resolved`, a new comment arrived: run `status`.
 - On the first run, reviews and comments older than your last PR activity
   count as handled (a `NOTE` line says so). Unresolved threads always show.
 - `ROUND` counts re-requests. The limit (default 5) stops endless rounds of
