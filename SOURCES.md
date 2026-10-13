@@ -11,5 +11,6 @@ Where each third-party skill comes from, and how to refresh it.
 | sandi-metz-rules | https://github.com/lucianghinda/superpowers-ruby/tree/main/skills/sandi-metz-rules (MIT) | verified identical 2026-09-13 |
 | skill-creator | https://github.com/anthropics/skills/tree/main/skills/skill-creator (Apache-2.0) | Jan 2026 snapshot, upstream rewritten since |
 | create-pull-request, worktree-space, tearing-down-a-merged-worktree | own work | |
+| pr-review-loop | own work. Design draws on openai/skills `gh-address-comments` (Apache-2.0), openai/codex `babysit-pr` (Apache-2.0) and obra/superpowers `receiving-code-review` (MIT). No code copied. | 2026-10-13 |
 
 Refresh: sparse-clone the repo, copy the skill folder over the local one, update this table.
