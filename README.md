@@ -57,6 +57,7 @@ the linking step if you ever want it alone.
 | Skill | Use it when |
 | --- | --- |
 | `create-pull-request` | You want to open a GitHub pull request with a good title, body and labels. |
+| `pr-review-loop` | You want a PR watched for review comments: fix or push back, reply, resolve, and ask for another review until it is approved. |
 | `deep-research` | You need a long, cited research report with source quality checks. |
 | `herdr` | You are inside [Herdr](https://herdr.dev) and want to control panes, tabs or agents. |
 | `readme-writer` | You are writing a README or want to measure and lower the reading level of any prose. |

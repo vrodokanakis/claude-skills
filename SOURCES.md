@@ -12,5 +12,6 @@ Where each third-party skill comes from, and how to refresh it.
 | skill-creator | https://github.com/anthropics/skills/tree/main/skills/skill-creator (Apache-2.0) | Jan 2026 snapshot, upstream rewritten since |
 | test-audit | https://github.com/openclaw/openclaw/tree/main/.agents/skills/test-audit (MIT), adapted: OpenClaw paths and tools replaced with generic Ruby/JS/Python/Rust steps, plus `scripts/` and `references/`. Re-port by hand; do not copy over. | 80930af 2026-09-26 |
 | create-pull-request, worktree-space, tearing-down-a-merged-worktree | own work | |
+| pr-review-loop | own work. Design draws on openai/skills `gh-address-comments` (Apache-2.0), openai/codex `babysit-pr` (Apache-2.0) and obra/superpowers `receiving-code-review` (MIT). No code copied. | 2026-10-13 |
 
 Refresh: sparse-clone the repo, copy the skill folder over the local one, update this table.
